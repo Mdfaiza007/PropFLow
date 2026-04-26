@@ -1,71 +1,108 @@
-import React from "react";
-import { BrowserRouter as Router, Routes,Route, Navigate, BrowserRouter } from "react-router-dom";
-import { AppProvider, useAppContext } from "./context/App.Context";
-import Layout from "./components/Layout";
-import LoginPage from "./pages/LoginPage";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import Sidebar from './components/Sidebar';
 
-// const PlaceholderPage = ({title}) => (
-//   <div className="flex items-center justify-center h-screen bg-gray-100">
-//     <h1 className="text-3xl font-bold text-gray-800">{title} Page</h1>
-//   </div>
-// );
-// dummy dashboard page
-const Dashboard = () => <div className="text-2xl font-bold">Welcome to Dashboard</div>
+// Pages
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import PropertiesPage from './pages/PropertiesPage';
+import TenantsPage from './pages/TenantsPage';
+import PaymentsPage from './pages/PaymentsPage';
+import LeasePage from './pages/LeasePage';
+import MaintenancePage from './pages/MaintenancePage';
+import ProfilePage from './pages/ProfilePage';
 
-const ProtectedRoute = ({children}) => {
-  const {user, loading} = useAppContext();
-
-  if(loading) return <div>Loading.....</div>
-
-  if(!user) {
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user } = useAuth();
+  
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
-  return children; // agar login hai to andar aane do
-}
+  
+  if (allowedRoles && !allowedRoles.some(role => role.toLowerCase() === (user.role || '').toLowerCase())) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return children;
+};
 
 function App() {
-  return(
-    // <Router>
+  const { user, loading } = useAuth();
 
-    <AppProvider>
-      <BrowserRouter>
-    
-      <Routes>
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50">Loading...</div>;
+  }
 
-        {/* login routes : isme layout nahi cghahiye */}
+  return (
+    <div className="flex min-h-screen bg-slate-50 font-sans">
+      {user && <Sidebar />}
+      
+      <main className={`flex-1 overflow-y-auto ${user ? 'h-screen' : ''}`}>
+        <Routes>
+          <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" replace />} />
+          
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          
+          <Route 
+            path="/properties" 
+            element={
+              <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                <PropertiesPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/tenants" 
+            element={
+              <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                <TenantsPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/payments" 
+            element={
+              <ProtectedRoute allowedRoles={['Owner', 'Tenant']}>
+                <PaymentsPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/leases" 
+            element={
+              <ProtectedRoute allowedRoles={['Owner', 'Tenant', 'Manager']}>
+                <LeasePage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/maintenance" 
+            element={
+              <ProtectedRoute>
+                <MaintenancePage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } 
+          />
 
-        <Route path="/login" element= {<LoginPage/>}/>
-
-        {/* Secures Routes : Isme Guard lagaya hai aur layout lagaya hai */}
-
-        <Route
-        path="/"
-        element= {
-          <ProtectedRoute>
-            <Layout/>
-          </ProtectedRoute>
-        }
-        >
-        {/* ye routes outlet ki jagah render honge */}
-
-      {/* <Route path="/" element={<PlaceholderPage title = "login"/>} />
-      <Route path="/dashboard" element={<PlaceholderPage title = "dashboard"/>}/>
-      <Route path="/properties" element = {<PlaceholderPage title = "properties"/>}/>
-      <Route path="/tenants" element = {<PlaceholderPage title = "tenants"/>}/> */}
-
-      <Route index element = {<Navigate to="/dashboard" replace />}/>
-      <Route path="dashboard" element = {<Dashboard/>}/>
-      <Route path="properties" element = {<div>Properties Page</div>}/>
-      <Route path="tenants" element = {<div>Tenants Page</div>}/>
-      <Route path="payments" element = {<div>Payments Page</div>}/>
-      <Route path="leases" element = {<div>Leases Page</div>}/>
-      <Route path="maintenance" element = {<div>Maintenance Page</div>}/>
-      <Route path="profile" element = {<div>Profile Page</div>}/>
-      </Route>
-      </Routes>
-    // 
-      </BrowserRouter>
-    </AppProvider>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
   );
 }
 

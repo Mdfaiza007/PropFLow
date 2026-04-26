@@ -1,6 +1,7 @@
 import React from "react";
-import {Outlet,Link,useLocation,useNavigate} from "react-router-dom";
-import { useAppContext } from "../context/App.Context";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+// CHANGE 1: "App.Context" se dot hata kar "AppContext" kiya gaya hai
+import { useAppContext } from "../context/AppContext"; 
 import {
     LayoutDashboard,
     Building2,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 
 const Layout = () => {
-    const {user,logout} = useAppContext();
+    const { user, logout } = useAppContext();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -23,7 +24,6 @@ const Layout = () => {
     };
 
     // hum role ke hisab se menu set kar rahe hai
-
     const menuItems = [
         {name: 'Dashboard', path : '/dashboard', icon: <LayoutDashboard size = {20}/>},
         {name: 'Properties', path: '/properties', icon: <Building2 size={20}/>},
@@ -43,7 +43,6 @@ const Layout = () => {
                         <span>PropFlow</span>
                     </div>
                 </div>
-
 
                 <div className="flex-1 overflow-y-auto py-4">
                     <nav className="space-y-1 px-3">
@@ -110,6 +109,7 @@ const Layout = () => {
                 </Link>
             </div>
             </header>
+            
             {/* Page Content */}
             <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
                 <Outlet/>  
@@ -119,4 +119,5 @@ const Layout = () => {
         </div>
     );
 };
+
 export default Layout;
