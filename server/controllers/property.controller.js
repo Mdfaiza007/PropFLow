@@ -93,10 +93,7 @@ export const uploadPhotos = async (req, res) => {
       return res.status(400).json({ success: false, message: "Please upload image(s)" });
     }
     
-    const imageUrls = req.files.map(file => {
-      // Local disk storage returns filename, not a full url like cloudinary
-      return `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
-    });
+    const imageUrls = req.files.map(file => file.path);
     const property = await Property.findByIdAndUpdate(
       req.params.id,
       { $push: { photos: { $each: imageUrls } } },

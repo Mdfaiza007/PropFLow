@@ -37,9 +37,7 @@ export const submitRequest = async (req, res) => {
     
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      imageUrls = req.files.map(file => {
-        return `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
-      });
+      imageUrls = req.files.map(file => file.path);
     }
     
     const request = await MaintenanceRequest.create({

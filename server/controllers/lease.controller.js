@@ -106,7 +106,7 @@ export const uploadDocument = async (req, res) => {
       return res.status(400).json({ success: false, message: "Please upload a document" });
     }
     
-    const documentUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    const documentUrl = req.file.path;
     
     const lease = await Lease.findByIdAndUpdate(
       req.params.id,
