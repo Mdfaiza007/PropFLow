@@ -62,11 +62,17 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('propflow_token');
   };
 
+  // Update user in context (after profile/avatar update)
+  const updateUser = (updatedData) => {
+    setUser((prev) => ({ ...prev, ...updatedData }));
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
+    updateUser,
     loading
   };
 

@@ -127,7 +127,7 @@ const LoginPage = () => {
                     type="text"
                     required
                     className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-colors bg-slate-50 focus:bg-white text-slate-900"
-                    placeholder="Nhi Btaunga"
+                    placeholder="your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -145,7 +145,7 @@ const LoginPage = () => {
                   type="email"
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-colors bg-slate-50 focus:bg-white text-slate-900"
-                  placeholder="nhiBataunga@example.com"
+                  placeholder="your@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
